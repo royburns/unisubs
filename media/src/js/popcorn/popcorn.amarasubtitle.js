@@ -46,6 +46,9 @@ var Popcorn = Popcorn || null;
 
         },
         start: function(event, options){
+            // This may not be the right way to do this...
+            options.text = options.text.replace('\n', '<br>');
+
             if (options.text !== '') {
                 options.innerContainer.style.display = 'inline-block';
                 options.innerContainer.innerHTML = options.text || '';
