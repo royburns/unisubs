@@ -73,6 +73,10 @@ class Command(BaseCommand):
             default=None),
         make_option('--team', '-t', dest='team', type="str",
             default=None),
+        make_option('--query', '-q', dest='query', type="str",
+            default=None),
+        make_option('--youtube', '-u', dest='youtube_username', type="str",
+            default=None),
     )
 
     CACHE_PATH = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'yt-cache')
@@ -103,6 +107,8 @@ class Command(BaseCommand):
 
     def _fix_video(self, vurl):
         from apps.accountlinker.models import ThirdPartyAccount
+        from apps.videos.templatetags.videos_tags import shortlink_for_video
+
         video = vurl.video
         language_code = video.language
 
@@ -119,7 +125,8 @@ class Command(BaseCommand):
                                 account.oauth_refresh_token,
                                 vt.videoid)
 
-        video_url = video.get_absolute_url()
+        video_url = shortlink_for_video(video)
+        self.log(video_url)
 
         uri = UPLOAD_URI_BASE % bridge.youtube_video_id
         entry = bridge.GetVideoEntry(uri=uri)
@@ -130,8 +137,8 @@ class Command(BaseCommand):
 
         # For some reason the above video.get_absolute_url() call didn't
         # include the /en/ prefix.
-        unisubs_video_url = "http://www.universalsubtitles.org/en%s" % video_url
-        amara_video_url = "http://www.amara.org/en%s" % video_url
+        unisubs_video_url = video_url
+        amara_video_url = video_url
 
         unisubs_supposed_credit = self._get_supposed_credit(unisubs_video_url,
                 language_code)
@@ -145,10 +152,12 @@ class Command(BaseCommand):
             return video.video_id
 
         if current_description.startswith(amara_supposed_credit):
+            self.log("fixing supposed amara credit")
             new_description = current_description.replace(
                     amara_supposed_credit, '')
 
         if current_description.startswith(unisubs_supposed_credit):
+            self.log("fixing supposed unisubs credit")
             new_description = current_description.replace(
                     unisubs_supposed_credit, '')
 
@@ -173,7 +182,7 @@ class Command(BaseCommand):
             translate_string, AMARA_DESCRIPTION_CREDIT
         )
         credit = translate_string(AMARA_DESCRIPTION_CREDIT, language)
-        return "%s: %s\n\n" % (credit, vurl)
+        return str("%s: %s\n\n" % (credit, vurl)).strip()
 
     def _load_cache_file(self):
         if os.path.exists(self.CACHE_PATH):
@@ -188,10 +197,38 @@ class Command(BaseCommand):
         self.log('Pausing')
         sleep(3)
 
-    def handle(self, video_id, team, *args, **kwargs):
-        if video_id and team:
-            raise CommandError("You can specify either a video or a team.")
+    def _get_videos_from_query(self, query):
+        uri = "http://gdata.youtube.com/feeds/api/videos?q=%s&v=2"
+        uri = uri % query
 
+        from videos.feed_parser import FeedParser
+
+        urls = []
+
+        feed_parser = FeedParser(uri)
+        _iter = feed_parser.items()
+
+        for vt, info, entry in _iter:
+            urls.append(vt.convert_to_video_url())
+
+        next_url = [x for x in feed_parser.feed.feed.get('links', []) if x['rel'] == 'next']
+
+        while next_url:
+            url = next_url[0].href
+            feed_parser = FeedParser(url)
+            _iter = feed_parser.items()
+
+            for vt, info, entry in _iter:
+                urls.append(vt.convert_to_video_url())
+
+            self.log("%s videos loaded" % len(urls))
+
+            next_url = [x for x in feed_parser.feed.feed.get('links', []) if x['rel'] == 'next']
+            self._sleep()
+
+        return VideoUrl.objects.select_related('video').filter(url__in=urls)
+
+    def handle(self, video_id, team, query, youtube_username, *args, **kwargs):
         if video_id:
             try:
                 video = Video.objects.get(video_id=video_id)
@@ -217,17 +254,26 @@ class Command(BaseCommand):
 
         try:
 
-            all_team_videos = Video.objects.filter(teamvideo__isnull=False)
+            if query:
+                urls = self._get_videos_from_query(query)
+                videos = [u.video for u in urls]
+            elif youtube_username:
+                urls = VideoUrl.objects.select_related('video').filter(
+                        owner_username=youtube_username)
+                videos = [vurl.video for vurl in urls]
+            else:
 
-            if team:
-                self.log('Only processing videos for %s' % team)
-                all_team_videos = all_team_videos.filter(
-                        teamvideo__team__slug=team)
+                all_team_videos = Video.objects.filter(teamvideo__isnull=False)
 
-            videos = all_team_videos.exclude(video_id__in=self.cache['desc'])
+                if team:
+                    self.log('Only processing videos for %s' % team)
+                    all_team_videos = all_team_videos.filter(
+                            teamvideo__team__slug=team)
 
-            urls = VideoUrl.objects.filter(type=VIDEO_TYPE_YOUTUBE,
-                    video__in=videos)
+                videos = all_team_videos.exclude(video_id__in=self.cache['desc'])
+
+                urls = VideoUrl.objects.filter(type=VIDEO_TYPE_YOUTUBE,
+                        video__in=videos)
 
             self.log('%s video descriptions to process' % len(urls))
 

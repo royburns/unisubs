@@ -104,6 +104,8 @@ ACTIONS_ON_PAGE = getattr(settings, 'ACTIONS_ON_PAGE', 20)
 DEV = getattr(settings, 'DEV', False)
 DEV_OR_STAGING = DEV or getattr(settings, 'STAGING', False)
 
+BILLING_CUTOFF = getattr(settings, 'BILLING_CUTOFF', None)
+
 
 # Management
 def index(request, my_teams=False):
@@ -724,6 +726,7 @@ def activity(request, slug):
 def detail_members(request, slug, role=None):
     q = request.REQUEST.get('q')
     lang = request.GET.get('lang')
+    sort = request.GET.get('sort', 'joined')
     filtered = False
 
     team = Team.get(slug, request.user)
@@ -755,6 +758,11 @@ def detail_members(request, slug, role=None):
             qs = qs.filter(role__in=[TeamMember.ROLE_OWNER, TeamMember.ROLE_ADMIN])
         else:
             qs = qs.filter(role=role)
+
+    if sort == 'joined':
+        qs = qs.order_by('created')
+    elif sort == '-joined':
+        qs = qs.order_by('-created')
 
     extra_context = widget.add_onsite_js_files({})
     extra_context['filtered'] = filtered
@@ -1953,5 +1961,6 @@ def billing(request):
 
     return render_to_response('teams/billing/choose.html', {
         'form': form,
-        'reports': reports
+        'reports': reports,
+        'cutoff': BILLING_CUTOFF
     }, RequestContext(request))

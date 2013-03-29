@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+#
+# Usage:
+# 
+#   $ prod-unreleased user sha
+#
+# Display links to Sifter tickets that "user" has worked on since "sha".  This
+# is really useful if you have a bunch of tickets that are near release and
+# want to double check everything before the release.
+#
+# The sha should be whatever is currently deployed in production.  User is your
+# git name.
+#
+# Example:
+#
+#   $ git checkout production
+#   $ ./prod-unreleased honza 6947fd9b7d5a6216d3a56e31b16370b8dbcfb93e
+
+AUTHOR=$1
+DEPLOYED=$2
+
+git log $DEPLOYED.. --author=$AUTHOR --no-merges --pretty=format:"%s" \
+    | cut -c 1-4 | sort | uniq \
+    | awk '{ print "https://unisubs.sifterapp.com/issues/"$0 }'

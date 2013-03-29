@@ -57,6 +57,13 @@
         <a href="http://about.amara.org/enterprise/">{% trans "See our pro services." %}</a>
         </p>
     </div>
+    <div>
+        <h2>{% trans "Order Captions" %}</h2>
+        <p>
+            {% trans "Lower costs and higher quality. Order captions and translations from Amara now, with rapid turnaround." %}
+            <a href="http://about.amara.org/order-subtitles/">{% trans "Learn more." %}</a>
+        </p>
+    </div>
 </div>
 
 <div id="home-right">
@@ -78,35 +85,60 @@
 </div>
 <div class="clearfix"></div>
 <div id="benefits" class="clearfix">
-    <a class="button" href="http://about.amara.org/enterprise/">{% trans "For Enterprise" %}</a>
-    <h2>{% trans "The largest, most powerful captioning and translation platform in the world." %}</h2>
+    <a class="button" href="http://about.amara.org/enterprise/">{% trans "Pro Services" %}</a>
+    <h2>{% trans "See how these companies use Amara to caption and subtitle more effectively." %}</h2>
 </div>
 <div id="partners">
     <ul class="clearfix">
         <li>
-            <a target="_blank" title="TED" href="http://www.universalsubtitles.org/en/teams/ted/">
-                <span style="height: 83px; display: block; padding-top: 36px;"><img src="{{ STATIC_URL }}images/partners/ted.png" alt="{% trans 'TED' %}"/></span>
+            <a target="_blank" title="TED" href="http://amara.org/en/teams/ted/">
+                <span style="padding-top:32px;"><img src="{{ STATIC_URL }}images/partners/ted.png" alt="{% trans 'TED' %}"/></span>
             </a>
+            <a class="button" href="http://amara.org/en/teams/ted/">{% trans "TED Community" %}</a>
         </li>
         <li>
-            <a target="_blank" title="Mozilla" href="http://www.universalsubtitles.org/en/teams/mozilla">
-                <span style="height: 120px; display: block;"><img src="{{ STATIC_URL }}images/partners/new_partner_mozilla.png" alt="{% trans 'Mozilla' %}"/></span>
+            <a target="_blank" title="Mozilla" href="http://amara.org/en/teams/mozilla/">
+                <span><img src="{{ STATIC_URL }}images/partners/new_partner_mozilla.png" alt="{% trans 'Mozilla' %}"/></span>
             </a>
+            <a class="button" href="http://amara.org/en/teams/mozilla/">{% trans "Mozilla Community" %}</a>
         </li>
         <li>
             <a target="_blank" title="Netflix" href="http://eepurl.com/n24oH">
-                <span style="height: 70px; padding-top: 25px; display: block;"><img src="{{ STATIC_URL }}images/partners/netflix.png" alt="{% trans 'Netflix' %}"/></span>
+                <span style="padding-top:22px;"><img src="{{ STATIC_URL }}images/partners/netflix.png" alt="{% trans 'Netflix' %}"/></span>
             </a>
+            <a class="button" href="http://eepurl.com/n24oH">{% trans "Netflix Community" %}</a>
         </li>
         <li>
-            <a target="_blank" title="Coursera" href="http://www.universalsubtitles.org/en/teams/coursera">
-                <span style="height: 22px; padding-top:49px; display: block;"><img src="{{ STATIC_URL }}images/partners/coursera.png" alt="{% trans 'Coursera' %}"/></span>
+            <a target="_blank" title="Coursera" href="http://amara.org/en/teams/coursera/">
+                <span style="padding-top:45px;"><img src="{{ STATIC_URL }}images/partners/coursera.png" alt="{% trans 'Coursera' %}"/></span>
             </a>
+            <a class="button" href="http://amara.org/en/teams/coursera/">{% trans "Coursera Community" %}</a>
+        </li>
+    </ul>
+    <ul class="clearfix" style="margin-top:24px;">
+        <li>
+            <a target="_blank" title="Twitter" href="http://amara.org/en/teams/twitter/">
+                <span><img src="{{ STATIC_URL }}images/partners/twitter.png" alt="{% trans 'Twitter' %}"/></span>
+            </a>
+            <a class="button" href="http://amara.org/en/teams/twitter/">{% trans "Twitter Community" %}</a>
         </li>
         <li>
-            <a target="_blank" title="PBS Newshour" href="http://www.universalsubtitles.org/en/teams/newshour">
-                <span style="height: 120px; display: block;"><img src="{{ STATIC_URL }}images/partners/new_partner_pbs.png" alt="{% trans 'PBS Newshour' %}"/></span>
+            <a target="_blank" title="Udacity" href="http://amara.org/en/teams/udacity/">
+                <span><img src="{{ STATIC_URL }}images/partners/udacity.png" alt="{% trans 'Udacity' %}"/></span>
             </a>
+            <a class="button" href="http://amara.org/en/teams/udacity/">{% trans "Udacity Community" %}</a>
+        </li>
+        <li>
+            <a target="_blank" title="Gravitas" href="http://amara.org/en/teams/join-gravitas-ventures/">
+                <span><img src="{{ STATIC_URL }}images/partners/gravitas.png" alt="{% trans 'Gravitas' %}"/></span>
+            </a>
+            <a class="button" href="http://amara.org/en/teams/join-gravitas-ventures/">{% trans "Gravitas Community" %}</a>
+        </li>
+        <li>
+            <a target="_blank" title="PBS Newshour" href="http://amara.org/en/teams/newshour/">
+                <span><img src="{{ STATIC_URL }}images/partners/new_partner_pbs.png" alt="{% trans 'PBS Newshour' %}"/></span>
+            </a>
+            <a class="button" href="http://amara.org/en/teams/newshour/">{% trans "PBS Newshour Community" %}</a>
         </li>
     </ul>
 </div>
@@ -132,19 +164,36 @@
     {% endwith %}
 </div>
 <div id="support-rec" class="clearboth">
-    <div class="grid_7 alpha">
-        <p>Generously supported by<br />
-        <a href="http://www.mozilla.org/"><img src="{{ STATIC_URL }}images/funders/mozilla.png" alt="Mozilla Foundation"/></a></p>
-        <a href="http://www.knightfoundation.org/"><img src="{{ STATIC_URL }}images/funders/knight.png" alt="Knight Foundation"/></a></p>
-        <p>With additional funding by<br />
-        <a href="http://www.macfound.org/"><img src="{{ STATIC_URL }}images/funders/macarthur.png" alt="MacArthur Foundation"/></a>
-        <a href="http://www.soros.org/"><img src="{{ STATIC_URL }}images/funders/opensociety.png" alt="Open Society Foundations"/></a></p>
+    <div class="grid_6 alpha">
+        <ul class="press">
+            <li>
+                <a href="http://www.forbes.com/sites/jamesmarshallcrotty/2012/08/31/amaras-wiki-style-translation-platform-enables-global-expansion-of-education-startups/">
+                    <img alt="" src="http://amarasubs.files.wordpress.com/2012/12/forbes.png?w=625"><br>
+                    <blockquote><p>Amara’s Wiki-Style Translation Platform Enables Global Growth Of Education Startups</p></blockquote>
+                </a>
+                <p><a href="http://www.forbes.com/sites/jamesmarshallcrotty/2012/08/31/amaras-wiki-style-translation-platform-enables-global-expansion-of-education-startups/"></a></p>
+            </li>
+            <li>
+                <a href="http://gigaom.com/video/netflix-amara-closed-captions-crowdsourcing/">
+                    <img alt="" src="http://amarasubs.files.wordpress.com/2012/12/gigaom.png?w=625"><br>
+                    <blockquote><p>Netflix experiments with crowd-sourced captioning</p></blockquote>
+                </a>
+                <p><a href="http://gigaom.com/video/netflix-amara-closed-captions-crowdsourcing/"></a></p>
+            </li>
+        </ul>
     </div>
-    <div id="recognition" class="grid_5 omega">
+    <div id="recognition" class="grid_6 omega">
         <p>{% trans "Awards for Amara" %}<br />
-        <a href="/about#fcc-award"><img src="{{ STATIC_URL }}images/awards/fcc.png" alt="FCC Award Advancement in Accessibility"/></a>
-        <a href="/about#tech-award"><img src="{{ STATIC_URL }}images/awards/tech_awards.png" alt="Tech Awards 2011"/></a>
-        <a href="/about#iia-award"><img src="{{ STATIC_URL }}images/awards/iia.png" alt="Intercultural Innovation Award"/></a></p>
+            <a href="/about#fcc-award">
+                <img src="{{ STATIC_URL }}images/awards/fcc.png" alt="FCC Award Advancement in Accessibility"/>
+            </a><br />
+            <a href="/about#tech-award">
+                <img src="{{ STATIC_URL }}images/awards/tech_awards.png" alt="Tech Awards 2011"/>
+            </a><br />
+            <a href="/about#iia-award">
+                <img src="{{ STATIC_URL }}images/awards/iia.png" alt="Intercultural Innovation Award"/>
+            </a>
+        </p>
     </div>
 </div>
 {% endblock %}

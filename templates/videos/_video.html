@@ -18,10 +18,6 @@
         <h4>{{ video|truncatewords:4 }}</h4>
     </a>
     <ul class="details">
-        <li class="views">
-            {{ video_views }}
-            {% blocktrans count video_views as views %}view{% plural %}views{% endblocktrans %}
-        </li>
         {% if showdate = 'true' %}
             <li class="date">{% trans "Added" %}: {{ video.created|date:"M j Y" }}</li>
         {% endif %}

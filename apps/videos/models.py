@@ -67,6 +67,7 @@ VIDEO_TYPE_GOOGLE = 'G'
 VIDEO_TYPE_FORA = 'F'
 VIDEO_TYPE_USTREAM = 'U'
 VIDEO_TYPE_VIMEO = 'V'
+VIDEO_TYPE_WISTIA = 'W'
 VIDEO_TYPE_DAILYMOTION = 'D'
 VIDEO_TYPE_FLV = 'L'
 VIDEO_TYPE_BRIGHTCOVE = 'C'
@@ -79,6 +80,7 @@ VIDEO_TYPE = (
     (VIDEO_TYPE_FORA, 'Fora.tv'),
     (VIDEO_TYPE_USTREAM, 'Ustream.tv'),
     (VIDEO_TYPE_VIMEO, 'Vimeo.com'),
+    (VIDEO_TYPE_WISTIA, 'Wistia.com'),
     (VIDEO_TYPE_DAILYMOTION, 'dailymotion.com'),
     (VIDEO_TYPE_FLV, 'FLV'),
     (VIDEO_TYPE_BRIGHTCOVE, 'brightcove.com'),
@@ -1783,6 +1785,7 @@ def update_followers(sender, instance, created, **kwargs):
         except IntegrityError:
             # User already follows the video.
             pass
+
 
 post_save.connect(Awards.on_subtitle_version_save, SubtitleVersion)
 post_save.connect(update_followers, SubtitleVersion)

@@ -132,11 +132,11 @@
                     {% for team_video in videos %}
                         <li>
                             <div class="thumb">
-                                <a href="{{ team_video.video.get_absolute_url }}">
+                                <a href="{{ team_video.video.get_absolute_url }}" title="{{ team_video.video.get_title_display }}">
                                     <img src="{{ team_video.get_thumbnail }}" alt="{{ video.title }}">
                                 </a>
                                 <h4>
-                                    <a href="{{ team_video.video.get_absolute_url }}">
+                                    <a href="{{ team_video.video.get_absolute_url }}" title="{{ team_video.video.get_title_display }}">
                                         {{ team_video.video.title_display|truncatewords:15 }}
                                         {% if team_video.video.duration %}
                                             <span class="duration">{{ team_video.video.duration|format_duration }}</span>

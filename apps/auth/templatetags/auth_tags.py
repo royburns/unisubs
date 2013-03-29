@@ -44,6 +44,8 @@ def show_youtube_prompt(request):
         * authenticated users who haven't synced a YT account and haven't
           dismissed the prompt
     """
+    # We need to turn this off for now
+    return False
 
     if request.COOKIES.get('hide-yt-prompt') == 'yes':
         return False

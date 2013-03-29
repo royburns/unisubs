@@ -42,7 +42,9 @@ from utils.metrics import Meter
 from utils.translation import get_user_languages_from_request
 from videos import models, is_synced_value
 from videos.models import record_workflow_origin, Subtitle
-from videos.tasks import video_changed_tasks
+from videos.tasks import (
+    video_changed_tasks, upload_subtitles_to_original_service
+)
 from widget import video_cache
 from widget.base_rpc import BaseRpc
 from widget.forms import  FinishReviewForm, FinishApproveForm
@@ -781,6 +783,11 @@ class Rpc(BaseRpc):
         else:
             video_changed_tasks.delay(language.video.id)
             api_video_edited.send(language.video)
+
+            latest = language.latest_version()
+
+            if latest:
+                upload_subtitles_to_original_service.delay(latest.pk)
 
         is_complete = language.is_complete or language.calculate_percent_done() == 100
         user_message = self._get_user_message_for_save(user, language, is_complete)

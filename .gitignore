@@ -60,7 +60,7 @@ apps/services
 apps/servicesauth
 media/unisubservices
 user-data/pictures
-.vagrant
+.vagrant*
 venv
 unisubs-integration
 /.ponyrc

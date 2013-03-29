@@ -28,11 +28,16 @@
         window.IS_AUTHENTICATED = '{{ user.is_authenticated }}' == 'True';
         window.ROLLBACK_ALLOWED = '{{ rollback_allowed }}' == 'True';
         {% if video.team_set.all.0 %}
-            {% if video.team_set.all.0.is_private %}
+            {% if not video.team_set.all.0.is_visible %}
                 window.VIDEO_TEAM_NAME = 'Private';
             {% else %}
                 window.VIDEO_TEAM_NAME = '{{ video.team_set.all.0 }}';
                 window.VIDEO_TEAM_URL = '{{ video.team_set.all.0.get_absolute_url }}';
+            {% endif %}
+            {% if video.team_set.all.0.get_workflow.requires_review_or_approval %}
+                window.VIDEO_TEAM_WORKFLOW_ENABLED = true;
+            {% else %}
+                window.VIDEO_TEAM_WORKFLOW_ENABLED = false;
             {% endif %}
         {% endif %}
         {% if task.get_type_display == 'Translate' %}
@@ -95,12 +100,6 @@
             </div>
         {% endif %}
         <ul class="metrics">
-            <li>
-                <div>
-                    <p>{{ language.subtitles_fetched_count|simplify_number }}</p>
-                    <h4>{% trans "View" %}{{ language.subtitles_fetched_count|pluralize }}</h4>
-                </div>
-            </li>
             <li>
                 <div>
                     <p>{{ language.followers.count }}</p>

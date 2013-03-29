@@ -846,33 +846,28 @@ div.fix-chosen div.chzn-container {
         padding: 0;
     }
 
+    &.disabled, &.assigned {
+
+        p, a {
+            opacity: .8;
+        }
+        h3, img {
+            opacity: .5;
+        }
+    }
+
     &.disabled {
         padding-right: 0;
 
-        h3, p, a, ul {
-            opacity: .5;
-        }
-        img {
-            opacity: .3;
-        }
-        ul.actions, ul.admin-controls {
-            display: none !important;
-        }
         div.cannot-perform {
             float: right;
             width: 150px;
-            background: $faintest;
-            color: $lighter;
-            border: 1px solid $fainter;
+            margin-top: 2em;
             margin-bottom: 10px;
-            padding: 10px;
-            @include border-radius;
+            text-align: right;
+            color: $lighter;
 
             &.disabled {
-                float: none;
-                width: auto;
-                background: #F2DEDE;
-                border: 1px solid #EED3D7;
                 color: #B94A48;
             }
         }
@@ -1499,6 +1494,11 @@ div#language_picker {
 .profile.v1 .context img.avatar {
     margin: 0 17px;
 }
+.profile.v1 .context a.button {
+    display: block;
+    width: 60%;
+    margin: 1em auto;
+}
 .profile.v1 form {
     padding-top: 3em;
 
@@ -1619,13 +1619,9 @@ body.account {
     textarea.api-key-holder {
         height: 1.5em;
     }
-    #youtube-modal {
-        margin-top: -300px;
-
-        img {
-            display: block;
-            margin: 0 auto 1em;
-        }
+    #youtube-modal img {
+        display: block;
+        margin: 0 auto 1em;
     }
 }
 .profile .submit.remove {
@@ -2255,7 +2251,7 @@ div#rollback-button {
         a:hover {
             color: #35424A;
         }
-        &.last, &:last-child {
+        &.last {
             border: none;
         }
     }
@@ -2266,15 +2262,6 @@ div#rollback-button {
         &:last-child {
             border: none;
         }
-    }
-}
-
-#teams .context .metrics {
-    li:last-child {
-        border-right: 1px solid #eaeaea;
-    }
-    li.last {
-        border: none;
     }
 }
 
@@ -2770,8 +2757,6 @@ a.truncated-expand {
     padding: 2em 200px 2em 185px;
     background: #f2f2f2;
     @include border-radius(2px);
-    @include box-shadow(0,1px,6px,#ddd);
-    border: 1px solid #ddd;
 
     img {
         position: absolute;

@@ -67,6 +67,17 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="filter-chunk">
+                    <span class="inner">{% trans 'sorted by' %}</span>
+                    <select name="sort">
+                        <option {% if request.GET.sort == 'joined' %}selected="selected"{% endif %} value="{% query_string request.GET sort='joined' page='' %}">
+                            {% trans "date joined, oldest" %}
+                        </option>
+                        <option {% if request.GET.sort == '-joined' %}selected="selected"{% endif %} value="{% query_string request.GET sort='-joined' page='' %}">
+                            {% trans "date joined, most recent" %}
+                        </option>
+                    </select>
+                </div>
             </p>
             {% if filtered %}
                 <a href="{% url teams:detail_members team.slug %}" class="clear-filters">{% trans 'Clear' %}</a>

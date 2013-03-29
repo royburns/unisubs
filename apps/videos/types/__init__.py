@@ -21,6 +21,7 @@ from bliptv import BlipTvVideoType
 from htmlfive import HtmlFiveVideoType
 from dailymotion import DailymotionVideoType
 from vimeo import VimeoVideoType
+from wistia import WistiaVideoType
 from flv import FLVVideoType
 from brigthcove import BrightcoveVideoType
 from mp3 import Mp3VideoType
@@ -31,6 +32,7 @@ video_type_registrar.register(BlipTvVideoType)
 video_type_registrar.register(HtmlFiveVideoType)
 video_type_registrar.register(DailymotionVideoType)
 video_type_registrar.register(VimeoVideoType)
+video_type_registrar.register(WistiaVideoType)
 video_type_registrar.register(FLVVideoType)
 video_type_registrar.register(BrightcoveVideoType)
 video_type_registrar.register(Mp3VideoType)

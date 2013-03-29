@@ -19,6 +19,7 @@
 
 # Django settings for unisubs project.
 import os, sys
+from datetime import datetime
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_PROTOCOL  = 'http'
@@ -66,6 +67,8 @@ P3P_COMPACT = 'CP="CURa ADMa DEVa OUR IND DSP CAO COR"'
 
 DEFAULT_FROM_EMAIL = '"Amara" <feedback@universalsubtitles.org>'
 WIDGET_LOG_EMAIL = 'widget-logs@universalsubtitles.org'
+
+BILLING_CUTOFF = datetime(2013, 3, 1, 0, 0, 0)
 
 DATABASES = {
     'default': {
@@ -135,6 +138,8 @@ JS_CORE = \
      'js/player/vimeovideosource.js',
      'js/player/vimeovideoplayer.js',
      'js/player/dailymotionvideosource.js',
+     'js/player/wistiavideosource.js',
+     'js/player/wistiavideoplayer.js',
      'js/player/dailymotionvideoplayer.js',
      'js/startdialog/model.js',
      'js/startdialog/videolanguage.js',
@@ -261,7 +266,6 @@ JS_WIDGETIZER_CORE.extend([
     "js/widgetizer/wistia.js",
     "js/widgetizer/soundcloud.js",
     'js/player/ooyalaplayer.js', 
-    'js/player/wistiavideoplayer.js', 
     'js/player/brightcoveliteplayer.js', 
     'js/player/soundcloudplayer.js',
     'js/streamer/overlaycontroller.js'])

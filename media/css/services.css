@@ -91,9 +91,8 @@
     text-decoration: none;
 }
 
-#recognition img {
-    width: 100px;
-    margin-right: 20px;
+#support-rec #recognition img {
+    margin: 15px 0;
 }
 
 .page-footer {

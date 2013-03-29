@@ -32,7 +32,6 @@ from .videos.types import (
 from teams.models import Team
 from teams.moderation_const import APPROVED, UNMODERATED
 from auth.models import CustomUser as User
-from django.db.models import Q
 
 from utils.metrics import Meter
 
@@ -74,6 +73,16 @@ def youtube_sync(video, language):
             Meter('youtube.push.request').inc()
 
 
+def get_linked_accounts_for_video(video):
+    yt_url = video.videourl_set.filter(type=VIDEO_TYPE_YOUTUBE)
+
+    if yt_url.exists():
+        accounts = [ThirdPartyAccount.objects.resolve_ownership(u) for u in yt_url]
+        return filter(None, accounts)
+
+    return None
+
+
 def check_authorization(video):
     """
     Make sure that a video can have its subtitles synced to Youtube.  This
@@ -82,34 +91,25 @@ def check_authorization(video):
     Return a tuple of (is_authorized, ignore_new_syncing_logic).
     """
     team_video = video.get_team_video()
-    ignore_new_syncing_logic = False
 
-    if team_video:
-        team = team_video.team
-        has_linked_youtube_account = team.third_party_accounts.filter(
-                type=VIDEO_TYPE_YOUTUBE).exists()
-        if has_linked_youtube_account:
-            # Ignore the new syncing logic.  Use the linked Youtube account
-            # to publish subtitles to Youtube.
-            ignore_new_syncing_logic = True
-        else:
-            # The assumption is that it's the partner's official Youtube
-            # account and they don't want it messed up with strange subs.
-            return False, None
-    else:
-        # If a video isn't part of a team but the video's Youtube URL is linked
-        # to a team third party account, we don't sync to Youtube.
-        yt_url = video.videourl_set.filter(type=VIDEO_TYPE_YOUTUBE)
-        if yt_url.exists():
-            usernames = [url.owner_username for url in yt_url]
-            linked_accounts = ThirdPartyAccount.objects.filter(
-                    Q(full_name__in=usernames)|Q(username__in=usernames))
+    linked_accounts = get_linked_accounts_for_video(video)
 
-            if linked_accounts.exists():
-                if any(a.is_team_account for a in linked_accounts):
-                    return False, None
+    if not linked_accounts:
+        return False, False
 
-    return True, ignore_new_syncing_logic
+    if all([a.is_team_account for a in linked_accounts]):
+        if not team_video:
+            return False, False
+
+        tpas_for_team = team_video.team.third_party_accounts.all()
+
+        if any(tpa in tpas_for_team for tpa in linked_accounts):
+            return True, True
+
+    if all([a.is_individual_account for a in linked_accounts]):
+        return True, True
+
+    return False, False
 
 
 def can_be_synced(version):
@@ -160,20 +160,24 @@ def get_amara_credit_text(language='en'):
     return translate_string(AMARA_CREDIT, language)
 
 
-def add_amara_description_credit(old_description, video_url, language='en'):
+def add_amara_description_credit(old_description, video_url, language='en',
+        prepend=False):
     """
     Prepend the credit to the existing description.
     """
-    credit = translate_string(AMARA_DESCRIPTION_CREDIT, language)
+    credit = "%s\n\n%s" % (translate_string(AMARA_DESCRIPTION_CREDIT,
+        language), video_url)
 
-    if old_description and old_description.startswith(credit):
+    old_description = old_description or u''
+    if credit in old_description:
         return old_description
 
-    return "%s: %s\n\n%s" % (
-        credit,
-        video_url,
-        old_description or ""
-    )
+    temp = "%s\n\n%s"
+
+    if prepend:
+        return temp % (credit, old_description)
+    else:
+        return temp % (old_description, credit)
 
 
 class ThirdPartyAccountManager(models.Manager):

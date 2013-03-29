@@ -326,7 +326,7 @@ def should_add_credit(subtitle_version=None, video=None):
     return not video.get_team_video()
 
 
-def add_credit(subtitle_version, subs):
+def add_credit(subs, language_code, video_duration, subtitle_version):
     # If there are no subtitles, don't add any credits.  This shouldn't really
     # happen since only completed subtitle versions can be synced to Youtube.
     # But a little precaution never hurt anyone.
@@ -338,24 +338,26 @@ def add_credit(subtitle_version, subs):
 
     from accountlinker.models import get_amara_credit_text
 
-    language_code = subtitle_version.language.language
-    dur = subtitle_version.language.video.duration
-
     last_sub = subs[-1]
-    time_left_at_the_end = (dur * 1000) - last_sub['end']
+
+    # If the last subtitle doesn't have a marked end, we can't add the credit.
+    if last_sub['end'] == -1:
+        return subs
+
+    time_left_at_the_end = (video_duration * 1000) - last_sub['end']
 
     if time_left_at_the_end <= 0:
         return subs
 
     if time_left_at_the_end >= 3000:
-        start = (dur - 3) * 1000
+        start = (video_duration - 3) * 1000
     else:
-        start = (dur * 1000) - time_left_at_the_end
+        start = (video_duration * 1000) - time_left_at_the_end
 
     credit_sub = {
         'text': get_amara_credit_text(language_code),
         'start': start,
-        'end': dur * 1000,
+        'end': video_duration * 1000,
         'id': '',
         'start_of_paragraph': ''
     }
@@ -643,23 +645,24 @@ class YouTubeApiBridge(gdata.youtube.client.YouTubeClient):
         """
         from widget.srt_subs import GenerateSubtitlesHandler
 
-        lang = subtitle_version.language.language
+        language = subtitle_version.language.language
+        video = subtitle_version.language.video
 
         try:
-            lc = LanguageCode(lang.lower(), "unisubs")
+            lc = LanguageCode(language.lower(), "unisubs")
             lang = lc.encode("youtube")
         except KeyError:
-            logger.error("Couldn't encode LC %s to youtube" % lang)
+            logger.error("Couldn't encode LC %s to youtube" % language)
             return
 
         handler = GenerateSubtitlesHandler.get('srt')
         subs = [x.for_generator() for x in subtitle_version.ordered_subtitles()]
 
         if not self.is_always_push_account:
-            subs = add_credit(subtitle_version, subs)
+            subs = add_credit(subs, language, video.duration, subtitle_version)
             self.add_credit_to_description(subtitle_version.language.video)
 
-        content = unicode(handler(subs, subtitle_version.language.video )).encode('utf-8')
+        content = unicode(handler(subs, video)).encode('utf-8')
         title = ""
 
         if hasattr(self, "captions") is False:
@@ -704,7 +707,7 @@ class YouTubeApiBridge(gdata.youtube.client.YouTubeClient):
         entry = entry.to_string()
         entry = gdata.youtube.YouTubeVideoEntryFromString(entry)
 
-        old_description = entry.media.description.text
+        old_description = entry.media.description.text or ''
 
         if old_description:
             old_description = old_description.decode("utf-8")

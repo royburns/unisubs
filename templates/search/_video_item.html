@@ -29,12 +29,5 @@
             {% endwith %}
           {% endfor %}
     </div><!-- // lang_avail -->
-    {% if not display_mode or display_mode == 'all' or display_mode == 'details' %}
-      <div class="video_details">
-        <div class="page_loads">{% trans "Plays (this week)" %} <strong>{{ video.views.week|default:0 }}</strong></div>
-        <div class="page_loads">{% trans "Plays (this month)" %} <strong>{{ video.views.month|default:0 }}</strong></div>
-        <div class="page_loads">{% trans "Plays (all time)" %} <strong>{{ video.views.total|default:0 }}</strong></div>
-      </div><!-- // video_details -->
-   {% endif %}
   </div><!-- // info -->
 </li>

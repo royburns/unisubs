@@ -26,7 +26,7 @@ from messages.forms import TeamAdminPageMessageForm
 from teams.models import (
     Team, TeamMember, TeamVideo, Workflow, Task, Setting, MembershipNarrowing,
     Project, TeamLanguagePreference, TeamNotificationSetting, BillingReport,
-    Partner, Application, ApplicationInvalidException, Invite
+    Partner, Application, ApplicationInvalidException, Invite, BillingRecord
 )
 from videos.models import SubtitleLanguage
 
@@ -72,7 +72,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 class TeamMemberAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'team__name', 'user__first_name', 'user__last_name')
-    list_display = ('role', 'team_link', 'user_link')
+    list_display = ('role', 'team_link', 'user_link', 'created',)
     raw_id_fields = ('user', 'team')
 
     def team_link(self, obj):
@@ -218,6 +218,22 @@ class ApplicationAdmin(admin.ModelAdmin):
         except ApplicationInvalidException:
            django_messages.error(request, 'Not saved! Status already in use %s' )
 
+
+class BillingRecordAdmin(admin.ModelAdmin):
+    list_display = (
+        'video',
+        'subtitle_language',
+        'minutes',
+        'is_original',
+        'team',
+        'created',
+        'source',
+        'user',
+        'subtitle_version'
+    )
+    list_filter = ('team', 'created', 'user', 'is_original',)
+
+
 admin.site.register(TeamMember, TeamMemberAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(TeamVideo, TeamVideoAdmin)
@@ -232,3 +248,4 @@ admin.site.register(BillingReport, BillingReportAdmin)
 admin.site.register(Partner)
 admin.site.register(Invite, InviteAdmin)
 admin.site.register(Application, ApplicationAdmin)
+admin.site.register(BillingRecord, BillingRecordAdmin)

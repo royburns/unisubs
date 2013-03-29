@@ -26,7 +26,7 @@ def get_youtube_data(user_pk):
         logger.error('User with PK %s not found' % user_pk)
         return
 
-    usernames = [a.full_name for a in user.third_party_accounts.all()]
+    usernames = [a.username for a in user.third_party_accounts.all()]
     urls = VideoUrl.objects.filter(owner_username__in=usernames)
     videos = [url.video for url in urls]
 
@@ -57,6 +57,6 @@ def mirror_existing_youtube_videos(user_pk):
 
 
 @periodic_task(run_every=timedelta(seconds=60))
-def gauge_videos():
+def gauge_tpas():
     count = ThirdPartyAccount.objects.filter(type=VIDEO_TYPE_YOUTUBE).count()
     Gauge('youtube.accounts_linked').report(count)
